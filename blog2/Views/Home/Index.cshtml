@@ -1,0 +1,184 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var AllBannerList = ViewBag.List;
+    var AllProductlist = ViewBag.List1;
+
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Add a gray background color with some padding */
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+
+        /* Header/Blog Title */
+        .header {
+            padding: 30px;
+            font-size: 40px;
+            text-align: center;
+            background: white;
+        }
+
+        /* Create two unequal columns that floats next to each other */
+        /* Left column */
+        .leftcolumn {
+            float: left;
+            width: 75%;
+        }
+
+        /* Right column */
+        .rightcolumn {
+            float: left;
+            width: 25%;
+            padding-left: 20px;
+        }
+
+        /* Fake image */
+        .fakeimg {
+            background-color: #aaa;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Add a card effect for articles */
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: #ddd;
+            margin-top: 20px;
+        }
+
+        /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+        @@media screen and (max-width: 800px) {
+            .leftcolumn, .rightcolumn {
+                width: 100%;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Blog Name</h2>
+    </div>
+
+    <div class="row" id="AirTicketDomesticveiw">
+                <div class="leftcolumn">
+                    <div class="card" v-for="(item,index) in PostList">
+                        <h2> <b>title:</b>{{item.title}}</h2>
+                        <h5><b>date:</b>{{item.date}}</h5>
+
+                        <p><b>description:</b>{{item.description}}</p>
+                        <div>
+                            <b>Reply Comment:</b>
+                            <div v-for="(dat,index) in CList">
+                                <p v-if="item.id==dat.postId" ><b> Name:</b>{{dat.userName}}</p>
+                                <p v-if="item.id==dat.postId" ><b>Comment:</b>{{dat.usercomment}}</p>
+                            </div>
+                            <br /><br />
+                            Name:  <input type="text" v-model="comment.UserName" value="Name"><br />
+                            Comment:   <textarea name="comments" id="comments" v-model="comment.usercomment" style="font-family:sans-serif;font-size:1.2em;">
+        Hey... say something!
+        </textarea>
+                        </div>
+                        <input type="button" @@click="commenttt(item.id )"  value="Submit">
+                    </div>
+
+
+                </div>
+
+
+
+
+            </div>
+
+
+        
+
+    <div class="footer">
+        <h2>Footer</h2>
+    </div>
+
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+
+<script>
+    let vm = new Vue({
+        el: '#AirTicketDomesticveiw',
+        data: {
+            comment: { postId:'' },
+            PostList: [],
+            CList: [],
+            
+
+        },
+        methods: {
+            commenttt(id) {
+                this.comment.postId = id;
+                console.log(this.comment);
+                axios({
+                    method: 'post',
+                    url: '/Home/Create',
+                    data: this.comment
+                }).then(response => {
+                    this.PostList = response.data;
+                    console.log(this.PostList);
+                })
+            },
+            GetAllPost() {
+                axios({
+                    method: 'get',
+                    url: '/Home/Get',
+                }).then(response => {
+                    this.PostList = response.data;
+                    console.log(this.PostList);
+                })
+            },
+            GetAllComt() {
+                axios({
+                    method: 'get',
+                    url: '/Home/GetComt',
+                }).then(response => {
+                    this.CList = response.data;
+                    console.log(this.CList);
+                })
+            },
+
+
+        },
+        mounted() {
+            this.GetAllPost();
+            this.GetAllComt();
+
+        }
+    })
+</script>

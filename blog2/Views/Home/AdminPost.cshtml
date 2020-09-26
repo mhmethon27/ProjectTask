@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewData["Title"] = "AdminPost";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <div class="container" id="Air">
+        <div class="card  np-1">
+        <div class="card-header">
+            <div class="row top-header">
+                
+                <div class="col-md-6">
+                    <div class="form-group float-right ">
+                        <input type="search" v-model="search" class="form-control" placeholder="Search" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <table class="table table-striped" v-for="(item,index) in PostList">
+            <thead>
+                <tr>
+                    <th>Post {{item.id}}</th>
+                    <th>Admin </th>
+                    <th>{{item.postdate}} </th>
+                    <th>Comments {{item.productCount}} </th>
+                </tr>
+            </thead>
+            <tbody v-for="(dat,index) in CList">
+                <tr>
+
+                    <td v-if="item.id==dat.postId"><b>Comment </b>{{dat.id}}</td>
+                    <td v-if="item.id==dat.postId">{{dat.userName}}</td>
+                    <td v-if="item.id==dat.postId">{{dat.date}}</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+<script>
+    let vm = new Vue({
+        el: '#Air',
+        data: {
+            comment: { postId: '' },
+            PostList: [],
+            CList: [],
+
+
+        },
+        methods: {
+            commenttt(id) {
+                this.comment.postId = id;
+                console.log(this.comment);
+                axios({
+                    method: 'post',
+                    url: '/Home/Create',
+                    data: this.comment
+                }).then(response => {
+                    this.PostList = response.data;
+                    console.log(this.PostList);
+                })
+            },
+            GetAllPost() {
+                axios({
+                    method: 'get',
+                    url: '/Home/Get',
+                }).then(response => {
+                    this.PostList = response.data;
+                    console.log(this.PostList);
+                })
+            },
+            GetAllComt() {
+                axios({
+                    method: 'get',
+                    url: '/Home/GetComt',
+                }).then(response => {
+                    this.CList = response.data;
+                    console.log(this.CList);
+                })
+            },
+
+
+        },
+        mounted() {
+            this.GetAllPost();
+            this.GetAllComt();
+
+        },
+       
+    })
+</script>
+
